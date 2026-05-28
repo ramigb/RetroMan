@@ -44,27 +44,27 @@ export function Layout({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-background">
       <div className="flex h-screen overflow-hidden">
         <aside
-          className={`fixed inset-y-0 left-0 z-50 w-64 bg-card border-r transform transition-transform lg:relative lg:translate-x-0 ${
+          className={`fixed inset-y-0 left-0 z-50 w-64 border-r-2 bg-card/95 shadow-[8px_0_0_hsl(var(--primary)/0.25)] backdrop-blur transform transition-transform lg:relative lg:translate-x-0 ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          <div className="flex items-center justify-between h-16 px-6 border-b">
-            <Link to="/" className="text-xl font-bold text-primary">
+          <div className="flex items-center justify-between h-16 px-6 border-b-2 bg-background/45">
+            <Link to="/" className="font-mono text-xl font-black text-accent drop-shadow-[2px_2px_0_hsl(var(--primary)/0.6)]">
               Retroman
             </Link>
             <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setSidebarOpen(false)}>
               <X className="h-5 w-5" />
             </Button>
           </div>
-          <nav className="p-4 space-y-1">
+          <nav className="p-4 space-y-2">
             {navItems.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
-                className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
+                className={`flex items-center gap-3 rounded-md border-2 px-3 py-2 text-sm font-bold transition-all ${
                   location.pathname === item.to
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    ? "border-primary bg-primary text-primary-foreground shadow-[3px_3px_0_hsl(var(--secondary)/0.55)]"
+                    : "border-transparent text-muted-foreground hover:border-accent hover:bg-accent hover:text-accent-foreground"
                 }`}
                 onClick={() => setSidebarOpen(false)}
               >
@@ -73,9 +73,9 @@ export function Layout({ children }: { children: ReactNode }) {
               </Link>
             ))}
           </nav>
-          <div className="absolute bottom-0 left-0 right-0 p-4 border-t">
+          <div className="absolute bottom-0 left-0 right-0 border-t-2 bg-background/45 p-4">
             <div className="flex items-center gap-3 mb-3">
-              <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-medium">
+              <div className="flex h-8 w-8 items-center justify-center rounded-md border-2 border-accent bg-primary text-sm font-black text-primary-foreground shadow-[2px_2px_0_hsl(var(--secondary)/0.55)]">
                 {user?.name?.charAt(0).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
@@ -100,7 +100,7 @@ export function Layout({ children }: { children: ReactNode }) {
         )}
 
         <main className="flex-1 overflow-auto">
-          <header className="h-16 border-b flex items-center px-6 lg:px-8">
+          <header className="flex h-16 items-center border-b-2 bg-background/45 px-6 backdrop-blur lg:px-8">
             <Button variant="ghost" size="icon" className="lg:hidden mr-4" onClick={() => setSidebarOpen(true)}>
               <Menu className="h-5 w-5" />
             </Button>

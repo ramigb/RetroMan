@@ -1,197 +1,180 @@
 # Retroman
 
-A modern, collaborative team retrospectives platform built for product development teams. Facilitate structured retros that are fast, simple, and engaging — no heavy processes or corporate feel.
+Retroman is a collaborative retrospective app for product teams that want useful conversations, not another stiff process tool. It supports live and async retros, anonymous feedback, drag-and-drop grouping, voting, discussion notes, action tracking, team management, analytics, and AI-assisted summaries.
 
-## Features
+The current UI leans into a muted retro-arcade style: chunky outlines, compact screens, strong typography, and fast board interactions.
 
-### Core Retrospective Flow
-Six-phase workflow that guides teams from feedback collection to actionable outcomes:
+## Highlights
 
-1. **Draft** — Facilitator creates and configures the retro (team, template, voting rules)
-2. **Open** — Team members add anonymous or attributed feedback into category columns
-3. **Grouping** — Facilitator clusters related feedback into named themes via drag-and-drop
-4. **Voting** — Team votes on themes to prioritize discussion (limited votes per person)
-5. **Discussion** — Discuss top-voted themes, capture live notes, create action items
-6. **Completed** — Retro is closed; action items remain trackable
+- Structured six-phase retro flow from draft to completed outcomes
+- Anonymous or attributed feedback collection
+- Sticky-note board with category columns and drag-and-drop movement
+- Theme grouping with editable theme cards and AI auto-clustering
+- Prioritized voting with per-user vote limits
+- Live collaboration through WebSockets and online presence
+- Discussion notes and action items tied back to themes
+- Global action item tracking across retrospectives
+- Organization dashboard and analytics for recurring patterns
+- Built-in templates for common retro formats
+- Role-based access for admins, facilitators, and members
 
-### Feedback Board
-- Inline "+" button per column to add notes directly
-- Drag-and-drop notes between columns to change category
-- Category labels on every note for context during grouping
-- Anonymous or attributed posting
+## Product Flow
 
-### Theme Clustering
-- Drag unassigned notes onto theme cards to group them
-- Drag notes between themes to reorganize
-- Double-click or edit button to rename themes inline
-- AI-powered auto-clustering groups feedback by category and keyword analysis
+Retroman guides a retro through a practical workflow:
 
-### Voting
-- Configurable vote limit per user
-- One vote per theme, toggleable
-- Real-time vote count updates via WebSocket
+| Phase | Purpose |
+| --- | --- |
+| Draft | Facilitator creates the retro, picks the team/template, and configures voting. |
+| Open | Team members add anonymous or attributed notes to category columns. |
+| Grouping | Facilitator clusters related feedback into themes. |
+| Voting | Participants vote on themes to prioritize the discussion. |
+| Discussion | The team works through top themes and captures notes/actions. |
+| Completed | The retro closes, while action items remain trackable. |
 
-### Action Items
-- Create from any discussed theme
-- Assign owner, priority (low/medium/high/critical), and due date
-- Track status: Open → In Progress → Done
-- Global action items view across all retros
+## Built-In Templates
 
-### Real-time Collaboration
-- WebSocket-powered live updates across all connected clients
-- Members tab shows who's online in the retro room
-- Green/gray presence indicators
-
-### Dashboards & Analytics
-- **Organization dashboard** — Total retros, open actions, completion rate, top themes
-- **Team dashboard** — Sprint history, participation rates, recurring issues heatmap
-- **Analytics page** — Recurring bottlenecks, low-participation teams, unresolved actions, monthly trends
-
-### AI Capabilities
-- **Auto-clustering** — Groups unassigned feedback by category and keyword frequency
-- **Theme naming** — Suggests concise names from shared keywords
-- **Summarization** — Generates executive summary with theme breakdown and action stats
-- **Action suggestions** — Recommends concrete actions based on theme context
-- **Pattern recognition** — Detects recurring issues across historical retrospectives
-
-### Templates
-Six built-in retro templates:
 - Start / Stop / Continue
 - Mad / Sad / Glad
-- 4Ls (Liked, Learned, Lacked, Longed For)
-- Sailboat (Wind, Anchors, Rocks, Sun)
+- 4Ls: Liked, Learned, Lacked, Longed For
+- Sailboat: Wind, Anchors, Rocks, Sun
 - Sprint Health Check
-- Default (Went Well, Problems, Ideas, Risks, Kudos)
-
-Custom template builder for creating your own category sets.
-
-### Team Management
-- Admin/facilitator can create teams and manage members
-- Add/remove members via dedicated dialog
-- Role-based access: Admin, Facilitator, Member
-
-### Other
-- Dark/light mode toggle
-- Responsive sidebar navigation
-- JWT cookie-based authentication with persistent sessions
-- Direct retro link sharing — team members can join via URL
+- Default: Went Well, Problems, Ideas, Risks, Kudos
 
 ## Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
+| --- | --- |
 | Frontend | React 19, TypeScript, Vite |
-| UI | Tailwind CSS, shadcn/ui, Radix UI primitives |
-| Backend | Hono (Node.js) |
-| Database | SQLite (better-sqlite3) |
-| Real-time | WebSockets (@hono/node-ws) |
-| Auth | JWT (httpOnly cookies), bcrypt |
+| Styling | Tailwind CSS, Radix UI primitives, reusable UI components |
+| Backend | Hono on Node.js |
+| Database | SQLite with better-sqlite3 |
+| Realtime | WebSockets via @hono/node-ws |
+| Auth | JWT in httpOnly cookies, bcrypt password hashing |
 
-## Getting Started
+## Quick Start
 
 ### Prerequisites
+
 - Node.js 18+
 - npm 9+
 
-### Install & Run
+### Install
 
 ```bash
 npm install
-npm run seed    # populate database with demo data
-npm run dev     # starts server (port 3001) and web (port 5173)
 ```
 
-The app will be available at **http://localhost:5173**
+### Seed Demo Data
 
-### Demo Accounts
+```bash
+npm run seed
+```
+
+This creates demo users, teams, retrospectives, templates, and analytics-ready data.
+
+### Run The App
+
+```bash
+npm run dev
+```
+
+The development servers run at:
+
+| Service | URL |
+| --- | --- |
+| Web app | http://localhost:5173 |
+| API server | http://localhost:3001 |
+| Health check | http://localhost:3001/health |
+
+Vite proxies `/api` and `/ws` requests to the backend.
+
+## Demo Accounts
 
 | Email | Password | Role |
-|-------|----------|------|
+| --- | --- | --- |
 | admin@retroman.dev | password123 | Admin |
 | lead@acme.com | password123 | Facilitator |
 | member1@retroman.dev | password123 | Member |
 
-### Build for Production
+## Useful Scripts
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start web and API servers together. |
+| `npm run dev:web` | Start only the Vite frontend. |
+| `npm run dev:server` | Start only the Hono API server. |
+| `npm run seed` | Populate SQLite with demo data. |
+| `npm run build` | Build frontend and backend packages. |
+
+## Project Structure
+
+```text
+retroman/
+├── server/
+│   ├── src/
+│   │   ├── index.ts          # Hono app, CORS, routes, WebSocket setup
+│   │   ├── db.ts             # SQLite connection and schema
+│   │   ├── auth.ts           # JWT helpers and auth middleware
+│   │   ├── seed.ts           # Demo data seeder
+│   │   ├── seed-templates.ts # Built-in retro templates
+│   │   └── routes/           # REST API route modules
+│   └── package.json
+├── web/
+│   ├── src/
+│   │   ├── App.tsx           # Router and protected/public routes
+│   │   ├── main.tsx          # React entry point
+│   │   ├── index.css         # Tailwind layers and theme tokens
+│   │   ├── lib/              # API client, auth context, types, sockets
+│   │   ├── components/       # App shell and reusable UI primitives
+│   │   └── pages/            # Login, dashboard, board, teams, actions
+│   ├── tailwind.config.ts
+│   └── vite.config.ts
+├── PRD.md
+├── package.json
+└── README.md
+```
+
+## API Overview
+
+| Area | Endpoints |
+| --- | --- |
+| Auth | `/api/auth/me`, `/api/auth/login`, `/api/auth/register`, `/api/auth/logout` |
+| Organizations | `/api/orgs` |
+| Teams | `/api/teams`, `/api/teams/:id/members` |
+| Retrospectives | `/api/retros`, `/api/retros/:id`, `/api/retros/:id/advance` |
+| Feedback | `/api/feedback`, `/api/feedback/:id` |
+| Themes | `/api/themes`, `/api/themes/:id`, `/api/themes/:id/merge` |
+| Voting | `/api/votes`, `/api/votes/:themeId` |
+| Discussion | `/api/discussion` |
+| Actions | `/api/actions`, `/api/actions/:id` |
+| Templates | `/api/templates`, `/api/templates/:id` |
+| Dashboards | `/api/dashboard/org`, `/api/dashboard/team/:id`, `/api/dashboard/analytics` |
+| AI helpers | `/api/ai/auto-cluster`, `/api/ai/summarize`, `/api/ai/suggest-actions`, `/api/ai/patterns/:teamId` |
+| Presence | `/api/retros/:id/online-users`, `/ws/retro/:id` |
+
+## Configuration Notes
+
+- The API defaults to port `3001`.
+- The frontend defaults to Vite's port `5173`.
+- Set `PORT` to change the backend port.
+- Set `JWT_SECRET` in production. The development fallback is intentionally not suitable for deployment.
+- Auth cookies are marked `secure` when `NODE_ENV=production`.
+
+## Development Notes
+
+- The backend seeds built-in templates when the server starts.
+- The main retro board lives in `web/src/pages/RetroBoardPage.tsx`.
+- Shared UI styling is centralized in `web/src/components/ui` and `web/src/index.css`.
+- The frontend API client lives in `web/src/lib/api.ts`.
+- Realtime retro updates are handled by `web/src/lib/websocket.ts` and `/ws/retro/:id`.
+
+## Production Build
 
 ```bash
 npm run build
 ```
 
-## Project Structure
-
-```
-retroman/
-├── server/
-│   └── src/
-│       ├── index.ts          # Hono app, WebSocket setup, route mounting
-│       ├── db.ts             # SQLite connection and schema
-│       ├── auth.ts           # JWT signing, verification, middleware
-│       ├── utils.ts          # ID generation
-│       ├── seed.ts           # Demo data seeder
-│       ├── seed-templates.ts # Built-in template seeder
-│       └── routes/
-│           ├── auth.ts       # Login, register, logout, /me
-│           ├── orgs.ts       # Organization CRUD
-│           ├── teams.ts      # Team CRUD, member management
-│           ├── retros.ts     # Retrospective CRUD, phase advancement
-│           ├── feedback.ts   # Feedback item CRUD
-│           ├── themes.ts     # Theme CRUD, merge
-│           ├── votes.ts      # Vote create/delete
-│           ├── actions.ts    # Action item CRUD
-│           ├── templates.ts  # Template CRUD
-│           ├── discussion.ts # Discussion notes
-│           ├── dashboard.ts  # Org/team/analytics endpoints
-│           ├── ai.ts         # Auto-cluster, summarize, patterns
-│           └── users.ts      # User listing
-├── web/
-│   └── src/
-│       ├── main.tsx          # React entry point
-│       ├── App.tsx           # Router, protected routes
-│       ├── index.css         # Tailwind + CSS variables (dark/light)
-│       ├── lib/
-│       │   ├── api.ts        # API client
-│       │   ├── auth.tsx      # Auth context provider
-│       │   ├── types.ts      # TypeScript interfaces
-│       │   ├── utils.ts      # cn() utility
-│       │   └── websocket.ts  # WebSocket hook
-│       ├── components/
-│       │   ├── Layout.tsx    # Sidebar, header, dark mode
-│       │   └── ui/           # shadcn/ui components
-│       └── pages/
-│           ├── LoginPage.tsx
-│           ├── DashboardPage.tsx
-│           ├── TeamsPage.tsx
-│           ├── RetrosPage.tsx
-│           ├── RetroBoardPage.tsx  # Main retro board (all phases)
-│           ├── ActionsPage.tsx
-│           └── AnalyticsPage.tsx
-└── package.json              # Workspace root
-```
-
-## API Endpoints
-
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | /api/auth/me | Get current user |
-| POST | /api/auth/login | Login |
-| POST | /api/auth/register | Register |
-| GET | /api/teams | List teams |
-| POST | /api/teams | Create team |
-| PUT | /api/teams/:id | Update team / members |
-| GET | /api/retros | List retrospectives |
-| POST | /api/retros | Create retrospective |
-| POST | /api/retros/:id/advance | Advance to next phase |
-| GET/POST/PUT/DELETE | /api/feedback | Feedback CRUD |
-| GET/POST/PUT/DELETE | /api/themes | Theme CRUD |
-| POST/DELETE | /api/votes | Vote/unvote |
-| GET/POST/PUT/DELETE | /api/actions | Action item CRUD |
-| GET | /api/dashboard/org | Org dashboard data |
-| GET | /api/dashboard/team/:id | Team dashboard data |
-| GET | /api/dashboard/analytics | Analytics data |
-| POST | /api/ai/auto-cluster | AI auto-clustering |
-| POST | /api/ai/summarize | AI retro summary |
-| GET | /api/retros/:id/online-users | Online users in retro |
-| WS | /ws/retro/:id | Real-time retro updates |
+The frontend build is emitted from `web`, and the backend TypeScript output is emitted from `server`.
 
 ## License
 

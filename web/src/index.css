@@ -4,56 +4,97 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 84% 4.9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
+    --background: 246 38% 10%;
+    --foreground: 44 48% 88%;
+    --card: 247 31% 15%;
+    --card-foreground: 44 48% 88%;
+    --popover: 247 34% 12%;
+    --popover-foreground: 44 48% 88%;
+    --primary: 331 52% 58%;
+    --primary-foreground: 246 38% 10%;
+    --secondary: 188 45% 52%;
+    --secondary-foreground: 246 38% 10%;
+    --muted: 248 22% 22%;
+    --muted-foreground: 43 20% 68%;
+    --accent: 47 67% 62%;
+    --accent-foreground: 246 38% 10%;
+    --destructive: 5 63% 61%;
+    --destructive-foreground: 246 38% 10%;
+    --border: 188 34% 45%;
+    --input: 248 23% 27%;
+    --ring: 47 58% 60%;
+    --radius: 0.375rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 84% 4.9%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 94.1%;
+    --background: 248 43% 8%;
+    --foreground: 44 48% 90%;
+    --card: 248 32% 13%;
+    --card-foreground: 44 48% 90%;
+    --popover: 248 38% 10%;
+    --popover-foreground: 44 48% 90%;
+    --primary: 331 54% 62%;
+    --primary-foreground: 248 43% 8%;
+    --secondary: 188 48% 55%;
+    --secondary-foreground: 248 43% 8%;
+    --muted: 249 23% 19%;
+    --muted-foreground: 43 21% 70%;
+    --accent: 47 70% 64%;
+    --accent-foreground: 248 43% 8%;
+    --destructive: 5 65% 64%;
+    --destructive-foreground: 248 43% 8%;
+    --border: 188 36% 48%;
+    --input: 249 25% 23%;
+    --ring: 47 60% 62%;
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+    letter-spacing: 0;
   }
+
+  html {
+    min-height: 100%;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    min-height: 100%;
+    font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+    background:
+      radial-gradient(circle at 18% 12%, hsl(var(--primary) / 0.12), transparent 28rem),
+      radial-gradient(circle at 82% 10%, hsl(var(--secondary) / 0.1), transparent 30rem),
+      linear-gradient(135deg, hsl(248 43% 8%), hsl(var(--background)) 44%, hsl(255 36% 12%));
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background-image:
+      linear-gradient(hsl(var(--secondary) / 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--secondary) / 0.08) 1px, transparent 1px),
+      linear-gradient(hsl(0 0% 100% / 0.025) 50%, transparent 50%);
+    background-size: 32px 32px, 32px 32px, 100% 4px;
+    mask-image: linear-gradient(to bottom, black, transparent 85%);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Courier New", ui-monospace, SFMono-Regular, Menlo, monospace;
+    text-transform: uppercase;
+  }
+
+  ::selection {
+    background: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
   }
 }

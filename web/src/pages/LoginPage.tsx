@@ -41,11 +41,11 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      <Card className="w-full max-w-md">
+    <div className="flex min-h-screen items-center justify-center px-4">
+      <Card className="w-full max-w-md border-accent shadow-[8px_8px_0_hsl(var(--primary)/0.5),12px_12px_0_hsl(var(--secondary)/0.35)]">
         <CardHeader className="text-center">
-          <CardTitle className="text-3xl">Retroman</CardTitle>
-          <CardDescription>Team Retrospectives Made Simple</CardDescription>
+          <CardTitle className="text-4xl drop-shadow-[2px_2px_0_hsl(var(--primary)/0.55)]">Retroman</CardTitle>
+          <CardDescription>Team retrospectives, arcade mode</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="login">

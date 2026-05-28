@@ -137,4 +137,46 @@ function initSchema() {
     CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
     CREATE INDEX IF NOT EXISTS idx_team_members_user ON team_members(user_id);
   `);
+
+  migrateVotesAllowMultiplePerTheme();
+}
+
+function migrateVotesAllowMultiplePerTheme() {
+  const indexes = db.prepare("PRAGMA index_list(votes)").all() as Array<{ name: string; unique: number; origin: string }>;
+  const hasUserThemeUnique = indexes.some((index) => {
+    if (!index.unique || index.origin !== "u") return false;
+    const columns = db.prepare(`PRAGMA index_info(${index.name})`).all() as Array<{ name: string }>;
+    return columns.map((column) => column.name).join(",") === "user_id,theme_id";
+  });
+
+  if (!hasUserThemeUnique) return;
+
+  db.pragma("foreign_keys = OFF");
+  try {
+    db.exec(`
+      DROP INDEX IF EXISTS idx_votes_retro;
+      DROP INDEX IF EXISTS idx_votes_theme;
+
+      ALTER TABLE votes RENAME TO votes_old;
+
+      CREATE TABLE votes (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        theme_id TEXT NOT NULL REFERENCES themes(id) ON DELETE CASCADE,
+        retro_id TEXT NOT NULL REFERENCES retrospectives(id) ON DELETE CASCADE,
+        created_at TEXT NOT NULL DEFAULT (datetime('now'))
+      );
+
+      INSERT INTO votes (id, user_id, theme_id, retro_id, created_at)
+      SELECT id, user_id, theme_id, retro_id, created_at
+      FROM votes_old;
+
+      DROP TABLE votes_old;
+
+      CREATE INDEX IF NOT EXISTS idx_votes_retro ON votes(retro_id);
+      CREATE INDEX IF NOT EXISTS idx_votes_theme ON votes(theme_id);
+    `);
+  } finally {
+    db.pragma("foreign_keys = ON");
+  }
 }

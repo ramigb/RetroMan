@@ -16,7 +16,6 @@ import { Separator } from "@/components/ui/separator";
 import {
   Plus,
   ArrowRight,
-  ThumbsUp,
   CheckSquare,
   GripVertical,
   Trash2,
@@ -24,33 +23,34 @@ import {
   Users,
   Circle,
   Edit,
+  Minus,
 } from "lucide-react";
 
 const DEFAULT_CATEGORIES = ["Went Well", "Problems", "Ideas", "Risks", "Kudos"];
 const CATEGORY_COLORS: Record<string, string> = {
-  "Went Well": "bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-700",
-  "Problems": "bg-red-100 dark:bg-red-900/30 border-red-300 dark:border-red-700",
-  "Ideas": "bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700",
-  "Risks": "bg-orange-100 dark:bg-orange-900/30 border-orange-300 dark:border-orange-700",
-  "Kudos": "bg-purple-100 dark:bg-purple-900/30 border-purple-300 dark:border-purple-700",
-  "Start": "bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-700",
-  "Stop": "bg-red-100 dark:bg-red-900/30 border-red-300 dark:border-red-700",
-  "Continue": "bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700",
-  "Mad": "bg-red-100 dark:bg-red-900/30 border-red-300 dark:border-red-700",
-  "Sad": "bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700",
-  "Glad": "bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-700",
-  "Liked": "bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-700",
-  "Learned": "bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700",
-  "Lacked": "bg-orange-100 dark:bg-orange-900/30 border-orange-300 dark:border-orange-700",
-  "Longed For": "bg-purple-100 dark:bg-purple-900/30 border-purple-300 dark:border-purple-700",
-  "Wind": "bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-700",
-  "Anchors": "bg-red-100 dark:bg-red-900/30 border-red-300 dark:border-red-700",
-  "Rocks": "bg-orange-100 dark:bg-orange-900/30 border-orange-300 dark:border-orange-700",
-  "Sun": "bg-yellow-100 dark:bg-yellow-900/30 border-yellow-300 dark:border-yellow-700",
+  "Went Well": "bg-emerald-950/70 text-emerald-100 border-emerald-500/70",
+  "Problems": "bg-rose-950/70 text-rose-100 border-rose-500/70",
+  "Ideas": "bg-cyan-950/70 text-cyan-100 border-cyan-500/70",
+  "Risks": "bg-amber-950/70 text-amber-100 border-amber-500/70",
+  "Kudos": "bg-fuchsia-950/70 text-fuchsia-100 border-fuchsia-500/70",
+  "Start": "bg-emerald-950/70 text-emerald-100 border-emerald-500/70",
+  "Stop": "bg-rose-950/70 text-rose-100 border-rose-500/70",
+  "Continue": "bg-cyan-950/70 text-cyan-100 border-cyan-500/70",
+  "Mad": "bg-rose-950/70 text-rose-100 border-rose-500/70",
+  "Sad": "bg-cyan-950/70 text-cyan-100 border-cyan-500/70",
+  "Glad": "bg-emerald-950/70 text-emerald-100 border-emerald-500/70",
+  "Liked": "bg-emerald-950/70 text-emerald-100 border-emerald-500/70",
+  "Learned": "bg-cyan-950/70 text-cyan-100 border-cyan-500/70",
+  "Lacked": "bg-amber-950/70 text-amber-100 border-amber-500/70",
+  "Longed For": "bg-fuchsia-950/70 text-fuchsia-100 border-fuchsia-500/70",
+  "Wind": "bg-emerald-950/70 text-emerald-100 border-emerald-500/70",
+  "Anchors": "bg-rose-950/70 text-rose-100 border-rose-500/70",
+  "Rocks": "bg-amber-950/70 text-amber-100 border-amber-500/70",
+  "Sun": "bg-yellow-950/70 text-yellow-100 border-yellow-500/70",
 };
 
 function getCategoryColor(category: string): string {
-  return CATEGORY_COLORS[category] || "bg-gray-100 dark:bg-gray-900/30 border-gray-300 dark:border-gray-700";
+  return CATEGORY_COLORS[category] || "bg-slate-950/70 text-slate-100 border-slate-500/70";
 }
 
 export function RetroBoardPage() {
@@ -190,14 +190,17 @@ export function RetroBoardPage() {
     loadData();
   };
 
-  const handleVote = async (themeId: string) => {
-    if (!id || !retro) return;
-    const hasVoted = votes.some((v) => v.theme_id === themeId);
-    if (hasVoted) {
-      await api.votes.delete(themeId);
-    } else {
-      await api.votes.create(themeId, retro.id);
-    }
+  const handleAddVote = async (themeId: string) => {
+    if (!id || !retro || votesRemaining <= 0) return;
+    await api.votes.create(themeId, retro.id);
+    notifyUpdate();
+    loadData();
+  };
+
+  const handleRemoveVote = async (themeId: string) => {
+    const userVoteCount = votes.filter((v) => v.theme_id === themeId).length;
+    if (userVoteCount <= 0) return;
+    await api.votes.delete(themeId);
     notifyUpdate();
     loadData();
   };
@@ -733,14 +736,14 @@ export function RetroBoardPage() {
             {[...themes]
               .sort((a, b) => b.vote_count - a.vote_count)
               .map((theme) => {
-                const hasVoted = votes.some((v) => v.theme_id === theme.id);
+                const userVoteCount = votes.filter((v) => v.theme_id === theme.id).length;
                 const themeNotes = feedback.filter((f) => f.theme_id === theme.id);
                 return (
-                  <Card key={theme.id} className={hasVoted ? "ring-2 ring-primary" : ""}>
+                  <Card key={theme.id} className={userVoteCount > 0 ? "ring-2 ring-primary" : ""}>
                     <CardHeader>
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-base">{theme.name}</CardTitle>
-                        <Badge variant={hasVoted ? "default" : "outline"}>{theme.vote_count}</Badge>
+                        <Badge variant={userVoteCount > 0 ? "default" : "outline"}>{theme.vote_count}</Badge>
                       </div>
                     </CardHeader>
                     <CardContent>
@@ -755,15 +758,42 @@ export function RetroBoardPage() {
                         ))}
                       </div>
                       {retro.status === "voting" && (
-                        <Button
-                          variant={hasVoted ? "default" : "outline"}
-                          className="w-full"
-                          onClick={() => handleVote(theme.id)}
-                          disabled={!hasVoted && votesRemaining <= 0}
-                        >
-                          <ThumbsUp className="h-4 w-4 mr-1" />
-                          {hasVoted ? "Voted" : "Vote"}
-                        </Button>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between gap-3">
+                            <span className="text-xs font-bold uppercase text-muted-foreground">Your votes</span>
+                            <div className="flex gap-1.5" aria-label={`${userVoteCount} votes assigned`}>
+                              {Array.from({ length: retro.max_votes_per_user || 3 }).map((_, index) => (
+                                <span
+                                  key={index}
+                                  className={`h-3 w-3 rounded-full border ${
+                                    index < userVoteCount
+                                      ? "border-accent bg-accent"
+                                      : "border-muted-foreground/50 bg-muted"
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleRemoveVote(theme.id)}
+                              disabled={userVoteCount <= 0}
+                            >
+                              <Minus className="mr-1 h-4 w-4" />
+                              Remove
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => handleAddVote(theme.id)}
+                              disabled={votesRemaining <= 0}
+                            >
+                              <Plus className="mr-1 h-4 w-4" />
+                              Add
+                            </Button>
+                          </div>
+                        </div>
                       )}
                     </CardContent>
                   </Card>

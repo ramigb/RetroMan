@@ -33,6 +33,9 @@ votes.post("/", async (c) => {
   const retro = db.prepare("SELECT max_votes_per_user FROM retrospectives WHERE id = ?").get(retro_id) as any;
   if (!retro) return c.json({ error: "Retro not found" }, 404);
 
+  const theme = db.prepare("SELECT id FROM themes WHERE id = ? AND retro_id = ?").get(theme_id, retro_id);
+  if (!theme) return c.json({ error: "Theme not found for retro" }, 404);
+
   const currentVotes = db.prepare("SELECT COUNT(*) as count FROM votes WHERE retro_id = ? AND user_id = ?").get(
     retro_id,
     user.userId
@@ -41,12 +44,6 @@ votes.post("/", async (c) => {
   if (currentVotes.count >= retro.max_votes_per_user) {
     return c.json({ error: "Vote limit reached" }, 400);
   }
-
-  const existing = db.prepare("SELECT id FROM votes WHERE user_id = ? AND theme_id = ?").get(
-    user.userId,
-    theme_id
-  );
-  if (existing) return c.json({ error: "Already voted" }, 409);
 
   const id = generateId();
   db.prepare("INSERT INTO votes (id, user_id, theme_id, retro_id) VALUES (?, ?, ?, ?)").run(
@@ -69,7 +66,13 @@ votes.delete("/:themeId", (c) => {
   const user = c.get("user") as JwtPayload;
   const themeId = c.req.param("themeId");
 
-  db.prepare("DELETE FROM votes WHERE user_id = ? AND theme_id = ?").run(user.userId, themeId);
+  const vote = db.prepare(
+    "SELECT id FROM votes WHERE user_id = ? AND theme_id = ? ORDER BY created_at DESC, id DESC LIMIT 1"
+  ).get(user.userId, themeId) as any;
+
+  if (!vote) return c.json({ error: "No vote found" }, 404);
+
+  db.prepare("DELETE FROM votes WHERE id = ?").run(vote.id);
 
   db.prepare("UPDATE themes SET vote_count = (SELECT COUNT(*) FROM votes WHERE theme_id = ?) WHERE id = ?").run(
     themeId,
