@@ -178,4 +178,4 @@ The frontend build is emitted from `web`, and the backend TypeScript output is e
 
 ## License
 
-Internal use.
+MIT License. See [LICENSE](LICENSE).
